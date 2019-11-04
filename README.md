@@ -73,9 +73,7 @@ The up arrow should rotate the elements 90 degrees clockwise.
 
 
 
-
-
-
+To make the pieces stop... could put in a big loop which stars by adding a piece to the board and then when a piece meets the end or another piece, the whole functions stops, and the grid 'size' essentiall gets smaller by width (one row), then you loop through again, until the condition is met that the top of the grid is occupied. 
 
 
 
