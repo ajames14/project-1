@@ -34,13 +34,14 @@ body {
   background-color: fuchsia;
 }
 
-.fixed {
-  background-color: blue
-}
 
 #start {
   padding: 10px; 
   background-color: red;
   margin: 20px;
   color: white;
+}
+
+.stationary {
+  background-color: blue;
 }
