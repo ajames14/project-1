@@ -4,16 +4,47 @@
 
 /* The below centres the grid on middle of page */
 body {
+  font-family: 'Sedgwick Ave Display', cursive;
+  height: 100vh;
+  background-image: url(http://caribbeanpearl.co/wp-content/uploads//2018//12//brick-graffiti-wall-graffiti-brick-wall-backdrop-black-brick-graffiti-wallpaper.jpg);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+}
+
+main {
   align-items: center;
   display: flex;
-  height: 100vh;
+  height: 100%;
+  background-size: cover;
   justify-content: center;
   margin: 0;
+  
+}
+
+#title {
+  /* float: left; */
+  margin-top: 15px;
+  color: white;
+  font-size: 70px;
+  font-weight: bold;
+  color: black;
+  -webkit-text-fill-color: white; 
+  -webkit-text-stroke-width: 2px;
+  -webkit-text-stroke-color: black;
 }
 
 #grid {
   align-items: center;
-  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2);
+  margin: 0px 30px;
+  box-shadow: 0 0 50px 0px rgba(0, 0, 0, 0.8);
+  border: 2px solid white;
+  background-color: black;
   display: flex;
   flex-grow: 1; /* Not sure need this here? */
   flex-wrap: wrap;
@@ -34,12 +65,33 @@ body {
   background-color: fuchsia;
 }
 
+#controls {
+  background-color: black;
+  border: white 2px solid;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-evenly;
+  color: white;
+  margin: 50px;
+  padding: 15px;
+  font-size: 25px;
+  height: 100px;
+  box-shadow: 0 0 50px 0px rgba(0, 0, 0, 0.8);
+}
+
 
 #start {
-  padding: 10px; 
-  background-color: red;
-  margin: 20px;
+  height: 60px;
+  padding: 15px;
+  background-color: black;
+  border: white 2px solid;
+  margin: 50px;
   color: white;
+  font-size: 25px;
+  text-align: center;
+  box-shadow: 0 0 50px 0px rgba(0, 0, 0, 0.8);
+  
 }
 
 .stationary {
