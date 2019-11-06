@@ -45,3 +45,7 @@ body {
 .stationary {
   background-color: blue;
 }
+
+.rotated {
+  background-color: green;
+}

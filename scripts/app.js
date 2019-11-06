@@ -14,24 +14,24 @@ function setupGame() {
     cells.push(cell)
   }
 
-  const firstRow = []
-  for (let i = 0; i < width; i++) {
-    firstRow.push(cells[i])
-  }
-  console.log(firstRow)
-  const gameOver = firstRow.some((elem) => {
-    return (elem.classList.contains('occupied'))
-  })
+  // const firstRow = []
+  // for (let i = 0; i < width; i++) {
+  //   firstRow.push(cells[i])
+  // }
+  // console.log(firstRow)
+  // const gameOver = firstRow.some((elem) => {
+  //   return (elem.classList.contains('occupied'))
+  // })
 
-  const lastRow = []
-  for (let i = 190; i < gridSize; i++) {
-    lastRow.push(cells[i])
-  }
-  console.log(lastRow)
+  // const lastRow = []
+  // for (let i = 190; i < gridSize; i++) {
+  //   lastRow.push(cells[i])
+  // }
+  // console.log(lastRow)
 
-  const lastRowFull = lastRow.some((elem) => {
-    return (elem.classList.contains('stationary'))
-  })
+  // const lastRowFull = lastRow.some((elem) => {
+  //   return (elem.classList.contains('stationary'))
+  // })
 
   // Tertriminos set-up
 
@@ -39,9 +39,10 @@ function setupGame() {
   let tee = []
   let ell = []
   let square = []
-  const allShapes = ['line', 'tee', 'ell', 'square']
+  const allShapes = ['ell', 'ell', 'ell', 'ell']
   // let counter = 0
   let shapeInPlay
+  let rotation = 0
 
   function newShape() {
 
@@ -100,7 +101,8 @@ function setupGame() {
       return elem % width === 0
     })
   }
-  // LINE CODE 
+
+  // Below function adds shape to board and moves down grid automatically
 
   // Adds piece to board
   function shapeSelected(shape) {
@@ -109,7 +111,6 @@ function setupGame() {
       cells[shape[j]].classList.add('occupied')
     }
 
-    // Makes the piece move down the grid until it reaches the end and times out
     const boardInterval = setInterval(() => {
       if (isAtBottom(shape)) {
         clearInterval(boardInterval)
@@ -124,21 +125,34 @@ function setupGame() {
         for (let i = 0; i < shape.length; i++) {
           cells[shape[i]].classList.remove('occupied')
           cells[shape[i]].classList.add('stationary')
+          console.log('shapeBelow met')
         }
         newShape()
 
       } else {
-        for (let i = 0; i < shape.length; i++) {
-          cells[shape[i]].classList.remove('occupied')
-          shape[i] = shape[i] + width
-          cells[shape[i]].classList.add('occupied')
+        if (rotation % 4 === 1 || rotation === 3 || rotation % 4 === 3) {
+          for (let i = shape.length - 1; i >= 0; i--) {
+            cells[shape[i]].classList.remove('occupied')
+            shape[i] = shape[i] + width
+            cells[shape[i]].classList.add('occupied')
+            console.log('moving down vertically')
+          }
+        } else {
+          for (let i = 0; i < shape.length; i++) {
+            cells[shape[i]].classList.remove('occupied')
+            shape[i] = shape[i] + width
+            cells[shape[i]].classList.add('occupied')
+            console.log('moving down')
+          }
         }
       }
     }, 1000)
   }
-  // Make the piece move right, left, down on player click
 
-  document.addEventListener('keydown', (e) => {
+
+  // Event listeners - Make the piece move right, left, down on player click
+
+  document.addEventListener('keyup', (e) => {
     switch (e.keyCode) {
       case 39: {
         console.log('player pressed right')
@@ -215,8 +229,90 @@ function setupGame() {
           }
         }
         break
+      case 38:
+        if (shapeInPlay === line) {
+          rotation = rotation + 1
+          console.log(rotation)  
+          // Rotates 90 deg clockwise
+          if (rotation === 1 || rotation % 4 === 1) {
+            for (let i = 0; i < shapeInPlay.length; i++) {
+              cells[shapeInPlay[i]].classList.remove('occupied')
+              shapeInPlay[i] = shapeInPlay[i] + (i * (width - 1))
+              cells[shapeInPlay[i]].classList.add('occupied')
+            }
+          }
+          if (rotation === 2 || rotation % 4 === 2) {
+            for (let i = 0; i < shapeInPlay.length; i++) {
+              cells[shapeInPlay[i]].classList.remove('occupied')
+              shapeInPlay[i] = shapeInPlay[i] + (-i * (width + 1))
+              cells[shapeInPlay[i]].classList.add('occupied')
+            }
+            shapeInPlay.sort(function (a, b) {
+              return a - b
+            })
+          }
+          if (rotation === 3 || rotation % 4 === 3) {
+            for (let i = 0; i < shapeInPlay.length; i++) {
+              cells[shapeInPlay[i]].classList.remove('occupied')
+              shapeInPlay[i] = shapeInPlay[i] + ((i - 3) * (width - 1))
+              cells[shapeInPlay[i]].classList.add('occupied')
+            }
+          }
+          if (rotation === 4 || rotation % 4 === 0) {
+            for (let i = 0; i < shapeInPlay.length; i++) {
+              cells[shapeInPlay[i]].classList.remove('occupied')
+              shapeInPlay[i] = shapeInPlay[i] + ((3 - i) * (width + 1))
+              cells[shapeInPlay[i]].classList.add('occupied')
+            }
+            shapeInPlay.sort(function (a, b) {
+              return a - b
+            })
+          }
+        }
+
+        if (shapeInPlay === ell) {
+          rotation = rotation + 1
+          console.log(rotation)  
+          // Rotates 90 deg clockwise
+          if (rotation === 1 || rotation % 4 === 1) {
+            for (let i = 0; i < shapeInPlay.length; i++) {
+              cells[shapeInPlay[i]].classList.remove('occupied')
+              shapeInPlay[i] = shapeInPlay[i] + (i * (width - 1))
+              cells[shapeInPlay[i]].classList.add('occupied')
+            }
+          }
+          if (rotation === 2 || rotation % 4 === 2) {
+            for (let i = 0; i < shapeInPlay.length; i++) {
+              cells[shapeInPlay[i]].classList.remove('occupied')
+              shapeInPlay[i] = shapeInPlay[i] + (-i * (width + 1))
+              cells[shapeInPlay[i]].classList.add('occupied')
+            }
+            shapeInPlay.sort(function (a, b) {
+              return a - b
+            })
+          }
+          if (rotation === 3 || rotation % 4 === 3) {
+            for (let i = 0; i < shapeInPlay.length; i++) {
+              cells[shapeInPlay[i]].classList.remove('occupied')
+              shapeInPlay[i] = shapeInPlay[i] + ((i - 3) * (width - 1))
+              cells[shapeInPlay[i]].classList.add('occupied')
+            }
+          }
+          if (rotation === 4 || rotation % 4 === 0) {
+            for (let i = 0; i < shapeInPlay.length; i++) {
+              cells[shapeInPlay[i]].classList.remove('occupied')
+              shapeInPlay[i] = shapeInPlay[i] + ((3 - i) * (width + 1))
+              cells[shapeInPlay[i]].classList.add('occupied')
+            }
+            shapeInPlay.sort(function (a, b) {
+              return a - b
+            })
+          }
+        }
     }
   })
+
+
 
 
 
