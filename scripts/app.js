@@ -8,30 +8,31 @@ function setupGame() {
   const cells = []
   const start = document.querySelector('#start')
 
+
   for (let i = 0; i < gridSize; i++) {
     const cell = document.createElement('div')
     grid.appendChild(cell)
     cells.push(cell)
   }
 
-  // const firstRow = []
-  // for (let i = 0; i < width; i++) {
-  //   firstRow.push(cells[i])
-  // }
   // console.log(firstRow)
   // const gameOver = firstRow.some((elem) => {
   //   return (elem.classList.contains('occupied'))
   // })
 
-  // const lastRow = []
-  // for (let i = 190; i < gridSize; i++) {
-  //   lastRow.push(cells[i])
-  // }
-  // console.log(lastRow)
+  let rowArray = []
+  for (let i = 0; i < 20; i++) {
+    rowArray.push(cells.slice(i * 10, ((i * 10) + 10)))
+  }
 
-  // const lastRowFull = lastRow.some((elem) => {
-  //   return (elem.classList.contains('stationary'))
-  // })
+  console.log(rowArray)
+
+  const lastRow = []
+  for (let i = 190; i < gridSize; i++) {
+    lastRow.push(cells[i])
+  }
+
+
 
   // Tertriminos set-up
 
@@ -39,10 +40,11 @@ function setupGame() {
   let tee = []
   let ell = []
   let square = []
-  const allShapes = ['line', 'line', 'line', 'line']
+  const allShapes = ['line', 'tee', 'ell', 'square']
   // let counter = 0
   let shapeInPlay
   let rotation = 0
+  let initialShape
 
   function newShape() {
 
@@ -53,19 +55,26 @@ function setupGame() {
 
     if (currentShape === 'line') {
       line = [0, 1, 2, 3]
-      console.log(line)
+      initialShape = line
+      rotation = 0
       shapeInPlay = line
       shapeSelected(shapeInPlay)
     } else if (currentShape === 'square') {
       square = [11, 10, 1, 0]
+      initialShape = square
+      rotation = 0
       shapeInPlay = square
       shapeSelected(square)
     } else if (currentShape === 'tee') {
       tee = [11, 0, 1, 2]
+      initialShape = tee
+      rotation = 0
       shapeInPlay = tee
       shapeSelected(tee)
     } else if (currentShape === 'ell') {
       ell = [10, 0, 1, 2]
+      initialShape = ell
+      rotation = 0
       shapeInPlay = ell
       shapeSelected(ell)
     }
@@ -102,6 +111,60 @@ function setupGame() {
     })
   }
 
+  // function isLastRowFull() {
+  //   const lastRowFull = lastRow.every((elem) => {
+  //     return (elem.classList.contains('stationary'))
+  //   })
+  //   console.log(lastRowFull)
+  // }
+
+  function isRowFull() {
+    let checkForFullRow = []
+    for (let i = 0; i < 20; i++) {
+      checkForFullRow.push(rowArray[i].every((elem) => {
+        return elem.classList.contains('stationary')
+      })
+      )
+    }
+    console.log(checkForFullRow)
+
+    let indexArray = []
+    for (let i = 0; i < 20; i++) {
+      if (checkForFullRow[i] === true) {
+        indexArray.push(i)
+      }
+    }
+    console.log(indexArray)
+
+    for (let i = 0; i < indexArray.length; i++) {
+      const fullRow = rowArray[indexArray[i]]
+      console.log(fullRow)
+
+      for (let j = 0; j < fullRow.length; j++) {
+        fullRow[j].classList.remove('stationary')
+      }
+
+      let newFixedArray = []
+      for (let k = 0; k < (indexArray[0] * 10); k++) {
+        if (cells[k].classList.contains('stationary')) {
+          cells[k].classList.remove('stationary')
+          newFixedArray.push(cells[k + width])
+        }
+      }
+      for (let j = 0; j < newFixedArray.length; j++){
+        newFixedArray[j].classList.add('stationary')
+      }
+    }
+
+
+  }
+
+  // function isLineFarLeft(shape) {
+  //   return shape.every((elem) => {
+  //     return elem % width <= 2 && elem % width >= 0
+  //   })
+  // }
+
   function moveShape(newPositions) {
     shapeInPlay.forEach(oldPosition => {
       cells[oldPosition].classList.remove('occupied') // remove occupied class
@@ -110,55 +173,43 @@ function setupGame() {
       cells[newPosition].classList.add('occupied') // add occupied class
     })
     shapeInPlay = newPositions
-    console.log(shapeInPlay)
   }
 
   // Below function adds shape to board and moves down grid automatically
 
   // Adds piece to board
-  function shapeSelected(shape) {
+  function shapeSelected() {
 
-    for (let j = 0; j < shape.length; j++) {
-      cells[shape[j]].classList.add('occupied')
+    for (let j = 0; j < shapeInPlay.length; j++) {
+      cells[shapeInPlay[j]].classList.add('occupied')
     }
 
     const boardInterval = setInterval(() => {
-      if (isAtBottom(shape)) {
+      if (isAtBottom(shapeInPlay)) {
         clearInterval(boardInterval)
-        for (let i = 0; i < shape.length; i++) {
-          cells[shape[i]].classList.remove('occupied')
-          cells[shape[i]].classList.add('stationary')
+        for (let i = 0; i < shapeInPlay.length; i++) {
+          cells[shapeInPlay[i]].classList.remove('occupied')
+          cells[shapeInPlay[i]].classList.add('stationary')
         }
+        isRowFull()
         newShape()
 
-      } else if (isShapeBelow(shape)) {
+      } else if (isShapeBelow(shapeInPlay)) {
         clearInterval(boardInterval)
-        for (let i = 0; i < shape.length; i++) {
-          cells[shape[i]].classList.remove('occupied')
-          cells[shape[i]].classList.add('stationary')
-          console.log('shapeBelow met')
+        for (let i = 0; i < shapeInPlay.length; i++) {
+          cells[shapeInPlay[i]].classList.remove('occupied')
+          cells[shapeInPlay[i]].classList.add('stationary')
         }
+
         newShape()
 
       } else {
-        // if (shapeInPlay === line && rotation % 4 === 1 || rotation === 3 || rotation % 4 === 3) {
-        //   for (let i = shape.length - 1; i >= 0; i--) {
-        //     cells[shape[i]].classList.remove('occupied')
-        //     shape[i] = shape[i] + width
-        //     cells[shape[i]].classList.add('occupied')
-        //     console.log('moving down vertically')
-        //   }
-        // } else {
-        for (let i = 0; i < shape.length; i++) {
-          cells[shape[i]].classList.remove('occupied')
-          shape[i] = shape[i] + width
-          cells[shape[i]].classList.add('occupied')
-      
-
+        let newPositions = []
+        for (let i = 0; i < shapeInPlay.length; i++) {
+          newPositions.push(shapeInPlay[i] + width)
         }
-        console.log('shape is', shape)
+        moveShape(newPositions)
       }
-      // }
     }, 1000)
   }
 
@@ -169,52 +220,27 @@ function setupGame() {
     switch (e.keyCode) {
       case 39: {
         console.log('player pressed right')
-        if (shapeInPlay === square) {
-          if (isShapeFarRight(shapeInPlay) || isAtBottom(shapeInPlay) || isAtBottom(shapeInPlay)) {
-            return
-          } else {
-            for (let k = 0; k < shapeInPlay.length; k++) {
-              cells[shapeInPlay[k]].classList.remove('occupied')
-              shapeInPlay[k] = shapeInPlay[k] + 1
-              cells[shapeInPlay[k]].classList.add('occupied')
-            }
-          }
+        if (isShapeFarRight(shapeInPlay) || isAtBottom(shapeInPlay) || isAtBottom(shapeInPlay)) {
+          return
         } else {
-          if (isShapeFarRight(shapeInPlay) || isAtBottom(shapeInPlay) || isAtBottom(shapeInPlay)) {
-            return
-          } else {
-            for (let k = shapeInPlay.length - 1; k >= 0; k--) {
-              cells[shapeInPlay[k]].classList.remove('occupied')
-              shapeInPlay[k] = shapeInPlay[k] + 1
-              cells[shapeInPlay[k]].classList.add('occupied')
-            }
+          let newPositions = []
+          for (let k = 0; k < shapeInPlay.length; k++) {
+            newPositions.push(shapeInPlay[k] + 1)
           }
+          moveShape(newPositions)
         }
-        break
       }
+        break
       case 37:
         console.log('player pressed left')
-        if (shapeInPlay === square) {
-          if (isShapeFarLeft(shapeInPlay) || isAtBottom(shapeInPlay) || isShapeBelow(shapeInPlay)) {
-            return
-          } else {
-            for (let k = shapeInPlay.length - 1; k >= 0; k--) {
-              cells[shapeInPlay[k]].classList.remove('occupied')
-              shapeInPlay[k] = shapeInPlay[k] - 1
-              cells[shapeInPlay[k]].classList.add('occupied')
-            }
-          }
+        if (isShapeFarLeft(shapeInPlay) || isAtBottom(shapeInPlay) || isShapeBelow(shapeInPlay)) {
+          return
         } else {
-          if (isShapeFarLeft(shapeInPlay) || isAtBottom(shapeInPlay) || isShapeBelow(shapeInPlay)) {
-            return
-          } else {
-            for (let k = 0; k < shapeInPlay.length; k++) {
-
-              cells[shapeInPlay[k]].classList.remove('occupied')
-              shapeInPlay[k] = shapeInPlay[k] - 1
-              cells[shapeInPlay[k]].classList.add('occupied')
-            }
+          let newPositions = []
+          for (let k = 0; k < shapeInPlay.length; k++) {
+            newPositions.push(shapeInPlay[k] - 1)
           }
+          moveShape(newPositions)
         }
         break
       case 40:
@@ -235,184 +261,122 @@ function setupGame() {
           return
 
         } else {
-          for (let i = 0; i < shapeInPlay.length; i++) {
-            cells[shapeInPlay[i]].classList.remove('occupied')
-            shapeInPlay[i] = shapeInPlay[i] + width
-            cells[shapeInPlay[i]].classList.add('occupied')
+          let newPositions = []
+          for (let k = 0; k < shapeInPlay.length; k++) {
+            newPositions.push(shapeInPlay[k] + width)
           }
+          moveShape(newPositions)
         }
         break
       case 38:
-        if (shapeInPlay === line) {
-          let newPositions = []
-          for (let i = 0; i < shapeInPlay.length; i++) {
-            newPositions.push(shapeInPlay[i] + (i * (width - 1)))
+        if (initialShape === line) {
+          rotation = rotation + 1
+          if (rotation % 4 === 1) {
+            let newPositions = []
+            for (let i = 0; i < shapeInPlay.length; i++) {
+              newPositions.push(shapeInPlay[i] + (i * (width - 1)))
+            }
+            moveShape(newPositions)
           }
-          moveShape(newPositions)
-          shapeSelected(shapeInPlay)
+          if (rotation % 4 === 2) {
+            let newPositions = []
+            for (let i = 0; i < shapeInPlay.length; i++) {
+              newPositions.push(shapeInPlay[i] + (-i * (width + 1)))
+            }
+            moveShape(newPositions)
+
+          }
+          if (rotation % 4 === 3) {
+            let newPositions = []
+            for (let i = 0; i < shapeInPlay.length; i++) {
+              newPositions.push(shapeInPlay[i] + (i * (1 - width)))
+            }
+            moveShape(newPositions)
+          }
+          if (rotation % 4 === 0) {
+            let newPositions = []
+            for (let i = 0; i < shapeInPlay.length; i++) {
+              newPositions.push(shapeInPlay[i] + (i * (width + 1)))
+            }
+            moveShape(newPositions)
+          }
         }
-
-
-      //   if (shapeInPlay === line) {
-      //       // const newPositions = []
-      //       rotation = rotation + 1
-      //       console.log(rotation)
-      //       // Rotates 90 deg clockwise
-      //       if (rotation === 1 || rotation % 4 === 1) {
-      //         for (let i = 0; i < shapeInPlay.length; i++) {
-      //           cells[shapeInPlay[i]].classList.remove('occupied')
-      //           shapeInPlay[i] = shapeInPlay[i] + (i * (width - 1))
-      //           // newPositions.push(shapeInPlay[i] + (i * (width - 1)))
-      //           cells[shapeInPlay[i]].classList.add('occupied')
-      //         }
-      //         // moveShape(newPositions)
-      //       }
-      //       if (rotation === 2 || rotation % 4 === 2) {
-      //         for (let i = 0; i < shapeInPlay.length; i++) {
-      //           cells[shapeInPlay[i]].classList.remove('occupied')
-      //           shapeInPlay[i] = shapeInPlay[i] + (-i * (width + 1))
-      //           cells[shapeInPlay[i]].classList.add('occupied')
-      //         }
-      //         shapeInPlay.sort(function (a, b) {
-      //           return a - b
-      //         })
-      //       }
-      //       if (rotation === 3 || rotation % 4 === 3) {
-      //         for (let i = 0; i < shapeInPlay.length; i++) {
-      //           cells[shapeInPlay[i]].classList.remove('occupied')
-      //           shapeInPlay[i] = shapeInPlay[i] + ((i - 3) * (width - 1))
-      //           cells[shapeInPlay[i]].classList.add('occupied')
-      //         }
-      //       }
-      //       if (rotation === 4 || rotation % 4 === 0) {
-      //         for (let i = 0; i < shapeInPlay.length; i++) {
-      //           cells[shapeInPlay[i]].classList.remove('occupied')
-      //           shapeInPlay[i] = shapeInPlay[i] + ((3 - i) * (width + 1))
-      //           cells[shapeInPlay[i]].classList.add('occupied')
-      //         }
-      //         shapeInPlay.sort(function (a, b) {
-      //           return a - b
-      //         })
-      //       }
-      //     }
-
-      //     // ROTATIONS FOR ELL
-
-      //     if (shapeInPlay === ell) {
-      //       rotation = rotation + 1
-      //       console.log(rotation)
-      //       // Rotates 90 deg clockwise
-      //       if (rotation === 1 || rotation % 4 === 1) {
-      //         for (let i = 0; i < shapeInPlay.length; i++) {
-      //           switch (i) {
-      //             case 0:
-      //               shapeInPlay[i]
-      //               break
-      //             case 1:
-      //               cells[shapeInPlay[i]].classList.remove('occupied')
-      //               shapeInPlay[i] = shapeInPlay[i] + width + 1
-      //               cells[shapeInPlay[i]].classList.add('occupied')
-      //               break
-      //             case 2:
-      //               cells[shapeInPlay[i]].classList.remove('occupied')
-      //               shapeInPlay[i] = shapeInPlay[i] + (2 * width)
-      //               cells[shapeInPlay[i]].classList.add('occupied')
-      //               break
-      //             case 3:
-      //               cells[shapeInPlay[i]].classList.remove('occupied')
-      //               shapeInPlay[i] = shapeInPlay[i] + ((3 * width) - 1)
-      //               cells[shapeInPlay[i]].classList.add('occupied')
-      //               break
-      //           }
-      //         }
-      //         console.log(ell)
-      //       }
-      //       if (rotation === 2 || rotation % 4 === 2) {
-      //         for (let i = 0; i < shapeInPlay.length; i++) {
-      //           switch (i) {
-      //             case 0:
-      //               shapeInPlay[i]
-      //               break
-      //             case 1:
-      //               cells[shapeInPlay[i]].classList.remove('occupied')
-      //               shapeInPlay[i] = shapeInPlay[i] + width - 1
-      //               cells[shapeInPlay[i]].classList.add('occupied')
-      //               break
-      //             case 2:
-      //               cells[shapeInPlay[i]].classList.remove('occupied')
-      //               shapeInPlay[i] = shapeInPlay[i] - 2
-      //               cells[shapeInPlay[i]].classList.add('occupied')
-      //               break
-      //             case 3:
-      //               cells[shapeInPlay[i]].classList.remove('occupied')
-      //               shapeInPlay[i] = shapeInPlay[i] - width - 3
-      //               cells[shapeInPlay[i]].classList.add('occupied')
-      //               break
-      //           }
-      //         }
-      //         shapeInPlay.sort(function (a, b) {
-      //           return b - a
-      //         })
-      //         console.log(ell)
-      //       }
-      //       if (rotation === 3 || rotation % 4 === 3) {
-      //         for (let i = 0; i < shapeInPlay.length; i++) {
-      //           switch (i) {
-      //             case 0:
-      //               shapeInPlay[i]
-      //               break
-      //             case 1:
-      //               cells[shapeInPlay[i]].classList.remove('occupied')
-      //               shapeInPlay[i] = shapeInPlay[i] - width + 1
-      //               cells[shapeInPlay[i]].classList.add('occupied')
-      //               break
-      //             case 2:
-      //               cells[shapeInPlay[i]].classList.remove('occupied')
-      //               shapeInPlay[i] = shapeInPlay[i] + 2 - (2 * width)
-      //               cells[shapeInPlay[i]].classList.add('occupied')
-      //               break
-      //             case 3:
-      //               cells[shapeInPlay[i]].classList.remove('occupied')
-      //               shapeInPlay[i] = shapeInPlay[i] + width + 1
-      //               cells[shapeInPlay[i]].classList.add('occupied')
-      //               break
-      //           }
-      //         }
-      //         shapeInPlay.sort(function (a, b) {
-      //           return a - b
-      //         })
-      //         console.log(ell)
-      //       }
-      //       if (rotation === 4 || rotation % 4 === 0) {
-      //         for (let i = 0; i < shapeInPlay.length; i++) {
-      //           switch (i) {
-      //             case 0:
-      //               cells[shapeInPlay[i]].classList.remove('occupied')
-      //               shapeInPlay[i] = shapeInPlay[i] + 3 + width
-      //               cells[shapeInPlay[i]].classList.add('occupied')
-      //               break
-      //             case 1:
-      //               cells[shapeInPlay[i]].classList.remove('occupied')
-      //               shapeInPlay[i] = shapeInPlay[i] + 2
-      //               cells[shapeInPlay[i]].classList.add('occupied')
-      //               break
-      //             case 2:
-      //               cells[shapeInPlay[i]].classList.remove('occupied')
-      //               shapeInPlay[i] = shapeInPlay[i] - width + 1
-      //               cells[shapeInPlay[i]].classList.add('occupied')
-      //               break
-      //             case 3:
-      //               shapeInPlay[i]
-      //               break
-      //           }
-      //         }
-      //         shapeInPlay.sort(function (a, b) {
-      //           return a - b
-      //         })
-      //         console.log(ell)
-      //       }
-      //     }
+        if (initialShape === ell) {
+          rotation = rotation + 1
+          if (rotation % 4 === 1) {
+            let newPositions = []
+            newPositions.push(shapeInPlay[0])
+            newPositions.push(shapeInPlay[1] + width + 1)
+            newPositions.push(shapeInPlay[2] + (2 * width))
+            newPositions.push(shapeInPlay[3] + ((3 * width) - 1))
+            moveShape(newPositions)
+          }
+          if (rotation % 4 === 2) {
+            let newPositions = []
+            newPositions.push(shapeInPlay[0])
+            newPositions.push(shapeInPlay[1] + width - 1)
+            newPositions.push(shapeInPlay[2] - 2)
+            newPositions.push(shapeInPlay[3] - width - 3)
+            moveShape(newPositions)
+          }
+          if (rotation % 4 === 3) {
+            let newPositions = []
+            newPositions.push(shapeInPlay[0])
+            newPositions.push(shapeInPlay[1] - width - 1)
+            newPositions.push(shapeInPlay[2] - (2 * width))
+            newPositions.push(shapeInPlay[3] - (3 * width) + 1)
+            moveShape(newPositions)
+          }
+          if (rotation % 4 === 0) {
+            let newPositions = []
+            newPositions.push(shapeInPlay[0])
+            newPositions.push(shapeInPlay[1] - width + 1)
+            newPositions.push(shapeInPlay[2] + 2)
+            newPositions.push(shapeInPlay[3] + 3 + width)
+            moveShape(newPositions)
+          }
+        }
+        if (initialShape === tee) {
+          rotation = rotation + 1
+          if (rotation % 4 === 1) {
+            let newPositions = []
+            newPositions.push(shapeInPlay[0])
+            newPositions.push(shapeInPlay[1] + 2)
+            newPositions.push(shapeInPlay[2] + 1 + width)
+            newPositions.push(shapeInPlay[3] + (2 * width))
+            moveShape(newPositions)
+          }
+          if (rotation % 4 === 2) {
+            let newPositions = []
+            newPositions.push(shapeInPlay[0])
+            newPositions.push(shapeInPlay[1] + (2 * width))
+            newPositions.push(shapeInPlay[2] + width - 1)
+            newPositions.push(shapeInPlay[3] - 2)
+            moveShape(newPositions)
+            console.log(shapeInPlay)
+          }
+          if (rotation % 4 === 3) {
+            let newPositions = []
+            newPositions.push(shapeInPlay[0])
+            newPositions.push(shapeInPlay[1] - 2)
+            newPositions.push(shapeInPlay[2] - 1 - width)
+            newPositions.push(shapeInPlay[3] - (2 * width))
+            moveShape(newPositions)
+          }
+          if (rotation % 4 === 0) {
+            let newPositions = []
+            newPositions.push(shapeInPlay[0])
+            newPositions.push(shapeInPlay[1] - (2 * width))
+            newPositions.push(shapeInPlay[2] - width + 1)
+            newPositions.push(shapeInPlay[3] + 2)
+            moveShape(newPositions)
+          }
+        }
     }
+
+
+
+
   })
 
 
