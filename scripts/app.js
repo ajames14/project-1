@@ -111,6 +111,12 @@ function setupGame() {
     })
   }
 
+  function isShapeTwoBelow(shape) {
+    return shape.some((elem) => {
+      return cells[elem + (2 * width)].classList.contains('stationary')
+    })
+  }
+
   function isShapeFarRight(shape) {
     return shape.some((elem) => {
       return (elem + 1) % width === 0
@@ -120,6 +126,30 @@ function setupGame() {
   function isShapeFarLeft(shape) {
     return shape.some((elem) => {
       return elem % width === 0
+    })
+  }
+
+  function isLineFarLeft(shape) {
+    return shape.every((elem) => {
+      return elem % width < 3 && elem % width >= 0
+    })
+  }
+
+  function isLineFarRight(shape) {
+    return shape.every((elem) => {
+      return elem % width <= 9 && elem % width > 6
+    })
+  }
+
+  function isEllFarLeft(shape) {
+    return shape.some((elem) => {
+      return elem % width <= 1 && elem % width >= 0
+    })
+  }
+
+  function isEllFarRight(shape) {
+    return shape.some((elem) => {
+      return elem % width <= 9 && elem % width > 7
     })
   }
 
@@ -163,12 +193,6 @@ function setupGame() {
     }
   }
 
-
-  function isLineFarLeft(shape) {
-    return shape.some((elem) => {
-      return elem % width <= 2 && elem % width >= 0
-    })
-  }
 
 
 
@@ -274,6 +298,9 @@ function setupGame() {
         }
         break
       case 38:
+        if (isAtBottom(shapeInPlay) || isShapeBelow(shapeInPlay) || isShapeTwoBelow(shapeInPlay)){
+          return
+        } 
         if (initialShape === line) {
           rotation = rotation + 1
           if (rotation % 4 === 1) {
@@ -284,15 +311,17 @@ function setupGame() {
             moveShape(newPositions)
           }
           if (rotation % 4 === 2) {
-            if(isLineFarLeft) {
+            if (isLineFarLeft(shapeInPlay)) {
+              rotation = rotation - 1
+              console.log('shape far left')
               return
             } else {
-            let newPositions = []
-            for (let i = 0; i < shapeInPlay.length; i++) {
-              newPositions.push(shapeInPlay[i] + (-i * (width + 1)))
+              let newPositions = []
+              for (let i = 0; i < shapeInPlay.length; i++) {
+                newPositions.push(shapeInPlay[i] + (-i * (width + 1)))
+              }
+              moveShape(newPositions)
             }
-            moveShape(newPositions)
-          }
           }
           if (rotation % 4 === 3) {
             let newPositions = []
@@ -302,6 +331,11 @@ function setupGame() {
             moveShape(newPositions)
           }
           if (rotation % 4 === 0) {
+            if (isLineFarRight(shapeInPlay)) {
+              rotation = rotation - 1
+              console.log('shape far right')
+              return
+            }
             let newPositions = []
             for (let i = 0; i < shapeInPlay.length; i++) {
               newPositions.push(shapeInPlay[i] + (i * (width + 1)))
@@ -320,12 +354,18 @@ function setupGame() {
             moveShape(newPositions)
           }
           if (rotation % 4 === 2) {
-            let newPositions = []
-            newPositions.push(shapeInPlay[0])
-            newPositions.push(shapeInPlay[1] + width - 1)
-            newPositions.push(shapeInPlay[2] - 2)
-            newPositions.push(shapeInPlay[3] - width - 3)
-            moveShape(newPositions)
+            if (isEllFarLeft(shapeInPlay)) {
+              rotation = rotation - 1
+              console.log('ell is far left')
+              return
+            } else {
+              let newPositions = []
+              newPositions.push(shapeInPlay[0])
+              newPositions.push(shapeInPlay[1] + width - 1)
+              newPositions.push(shapeInPlay[2] - 2)
+              newPositions.push(shapeInPlay[3] - width - 3)
+              moveShape(newPositions)
+            }
           }
           if (rotation % 4 === 3) {
             let newPositions = []
@@ -336,6 +376,10 @@ function setupGame() {
             moveShape(newPositions)
           }
           if (rotation % 4 === 0) {
+            if (isEllFarRight(shapeInPlay)) {
+              rotation = rotation - 1
+              return 
+            }
             let newPositions = []
             newPositions.push(shapeInPlay[0])
             newPositions.push(shapeInPlay[1] - width + 1)
