@@ -44,8 +44,9 @@ function setupGame() {
   let tee = []
   let ell = []
   let square = []
+  let zed = []
   let startClicked = 0
-  const allShapes = ['line', 'tee', 'ell', 'square']
+  const allShapes = ['line', 'tee', 'ell', 'square', 'zed']
   let shapeInPlay
   let rotation = 0
   let initialShape
@@ -57,7 +58,7 @@ function setupGame() {
       alert('GAME OVER!')
       return
     } else {
-      let currentShape = allShapes[Math.floor(Math.random() * 4)]
+      let currentShape = allShapes[Math.floor(Math.random() * 5)]
       console.log(currentShape)
 
       if (currentShape === 'line') {
@@ -84,6 +85,12 @@ function setupGame() {
         rotation = 0
         shapeInPlay = ell
         shapeSelected(ell)
+      } else if (currentShape === 'zed') {
+        zed = [0, 1, 11, 12]
+        initialShape = zed
+        rotation = 0
+        shapeInPlay = zed
+        shapeSelected(zed)
       }
     }
   }
@@ -153,6 +160,12 @@ function setupGame() {
     })
   }
 
+  function isZedFarLeft(shape) {
+    return shape.some((elem) => {
+      return elem % width === 0
+    })
+  }
+
   // *** Removing and moving rows down when filled ***
   function isRowFull() {
     let checkForFullRow = []
@@ -161,6 +174,7 @@ function setupGame() {
         return elem.classList.contains('stationary')
       })
       )
+      console.log(checkForFullRow)
     }
 
     let indexArray = []
@@ -172,19 +186,22 @@ function setupGame() {
         scoreInput.innerHTML = rowCounter * 100
         linesInput.innerHTML = rowCounter
       }
+      console.log(indexArray)
     }
 
+    
     for (let i = 0; i < indexArray.length; i++) {
       const fullRow = rowArray[indexArray[i]]
       for (let j = 0; j < fullRow.length; j++) {
         fullRow[j].classList.remove('stationary')
       }
+      console.log(fullRow)
 
       let newFixedArray = []
       for (let k = 0; k < (indexArray[0] * 10); k++) {
         if (cells[k].classList.contains('stationary')) {
           cells[k].classList.remove('stationary')
-          newFixedArray.push(cells[k + width])
+          newFixedArray.push(cells[k + (width * indexArray.length)])
         }
       }
       for (let j = 0; j < newFixedArray.length; j++) {
@@ -240,7 +257,7 @@ function setupGame() {
         }
         moveShape(newPositions)
       }
-    }, 500)
+    }, 250)
   }
 
   // Event listeners - Make the piece move right, left, down on player click
@@ -424,6 +441,53 @@ function setupGame() {
             moveShape(newPositions)
           }
         }
+        if (initialShape === zed) {
+          rotation = rotation + 1
+          if (rotation % 4 === 1) {
+            if (isZedFarLeft(shapeInPlay)) {
+              rotation = rotation - 1
+              console.log('zed far left')
+              return
+            }
+            let newPositions = []
+            newPositions.push(shapeInPlay[0])
+            newPositions.push(shapeInPlay[1] + width - 1)
+            newPositions.push(shapeInPlay[2] - 2)
+            newPositions.push(shapeInPlay[3] + width - 3)
+            moveShape(newPositions)
+          }
+          if (rotation % 4 === 2) {
+            if (isZedFarLeft(shapeInPlay)) {
+              rotation = rotation - 1
+              console.log('zed far left')
+              return
+            }
+            let newPositions = []
+            newPositions.push(shapeInPlay[0])
+            newPositions.push(shapeInPlay[1] - 1 - width)
+            newPositions.push(shapeInPlay[2] - (2 * width))
+            newPositions.push(shapeInPlay[3] - (3 * width) - 1)
+            moveShape(newPositions)
+            console.log(shapeInPlay)
+          }
+          if (rotation % 4 === 3) {
+            let newPositions = []
+            newPositions.push(shapeInPlay[0])
+            newPositions.push(shapeInPlay[1] - width + 1)
+            newPositions.push(shapeInPlay[2] + 2)
+            newPositions.push(shapeInPlay[3] + 3 - width)
+            moveShape(newPositions)
+          }
+          if (rotation % 4 === 0) {
+            let newPositions = []
+            newPositions.push(shapeInPlay[0])
+            newPositions.push(shapeInPlay[1] + 1 + width)
+            newPositions.push(shapeInPlay[2] + (2 * width))
+            newPositions.push(shapeInPlay[3] + (3 * width) + 1)
+            moveShape(newPositions)
+          }
+        }
+
     }
 
 
