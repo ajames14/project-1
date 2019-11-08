@@ -21,8 +21,9 @@ main {
   align-items: center;
   display: flex;
   height: 100%;
+  width: 100%;
   background-size: cover;
-  justify-content: center;
+  justify-content: space-evenly;
   margin: 0;
   
 }
@@ -30,29 +31,30 @@ main {
 #title {
   /* float: left; */
   margin-top: 15px;
-  color: white;
-  font-size: 70px;
-  font-weight: bold;
+  /* color: white; */
+  font-size: 80px; 
   color: black;
   -webkit-text-fill-color: white; 
-  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-width: 2px;
   -webkit-text-stroke-color: black;
   
 }
 
 #grid {
+  /* position: absolute; */
   align-items: center;
   margin: 0px 30px;
   box-shadow: 0 0 50px 0px rgba(0, 0, 0, 0.8);
   border: 2px solid white;
   background-color: black;
   display: flex;
-  flex-grow: 1; /* Not sure need this here? */
+  flex-grow: 1; 
   flex-wrap: wrap;
   height: 100%;
   justify-content: center;
   height: 600px;
   max-width: 300px;
+  
 }
 
 #grid div {
@@ -63,21 +65,26 @@ main {
 }
 
 .occupied {
-  background-color: fuchsia;
+  
+  background: rgb(59,103,158); /* Old browsers */
+  background: -moz-linear-gradient(top, rgba(59,103,158,1) 0%, rgba(43,136,217,1) 50%, rgba(32,124,202,1) 51%, rgba(125,185,232,1) 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(top, rgba(59,103,158,1) 0%,rgba(43,136,217,1) 50%,rgba(32,124,202,1) 51%,rgba(125,185,232,1) 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom, rgba(59,103,158,1) 0%,rgba(43,136,217,1) 50%,rgba(32,124,202,1) 51%,rgba(125,185,232,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3b679e', endColorstr='#7db9e8',GradientType=0 ); /* IE6-9 */
 }
 
 #controls {
   background-color: black;
   border: white 2px solid;
   display: flex;
-  align-items: center;
   flex-direction: column;
-  justify-content: space-evenly;
+  justify-content: space-around;
   color: white;
-  margin: 50px;
-  padding: 15px;
+  /* margin: 50px; */
+  padding: 20px 10px;
   font-size: 25px;
-  height: 100px;
+  width: 200px;
+  height: 200px;
   box-shadow: 0 0 50px 0px rgba(0, 0, 0, 0.8);
 }
 
@@ -87,18 +94,43 @@ main {
   padding: 15px;
   background-color: black;
   border: white 2px solid;
-  margin: 50px;
+  margin: 0px 0px 0px 100px;
   color: white;
   font-size: 25px;
   text-align: center;
-  box-shadow: 0 0 50px 0px rgba(0, 0, 0, 0.8);
-  
+  box-shadow: 0 5px rgba(255, 255, 255, 0.8);
+  font-family: 'Sedgwick Ave Display', cursive;
+  cursor: pointer;
+  border-radius: 15px;
+}
+
+#start:hover {
+  background-color: #e60073;
 }
 
 .stationary {
-  background-color: blue;
+  background: rgb(203,96,179); /* Old browsers */
+background: -moz-linear-gradient(top, rgba(203,96,179,1) 0%, rgba(193,70,161,1) 50%, rgba(168,0,119,1) 51%, rgba(219,54,164,1) 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(top, rgba(203,96,179,1) 0%,rgba(193,70,161,1) 50%,rgba(168,0,119,1) 51%,rgba(219,54,164,1) 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to bottom, rgba(203,96,179,1) 0%,rgba(193,70,161,1) 50%,rgba(168,0,119,1) 51%,rgba(219,54,164,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cb60b3', endColorstr='#db36a4',GradientType=0 ); /* IE6-9 */
+
 }
 
-.rotated {
-  background-color: green;
+
+/* .glow {
+  color: #fff;
+  text-align: center;
+  -webkit-animation: glow 1s ease-in-out infinite alternate;
+  -moz-animation: glow 1s ease-in-out infinite alternate;
+  animation: glow 1s ease-in-out infinite alternate;
 }
+
+@-webkit-keyframes glow {
+  from {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073, 0 0 40px #e60073, 0 0 50px #e60073, 0 0 60px #e60073, 0 0 70px #e60073;
+  }
+  to {
+    text-shadow: 0 0 50px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px #ff4da6, 0 0 60px #ff4da6, 0 0 70px #ff4da6, 0 0 80px #ff4da6;
+  }
+} */

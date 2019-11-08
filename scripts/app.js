@@ -1,13 +1,13 @@
 function setupGame() {
 
   // Grid set-up
-
   const width = 10
   const grid = document.querySelector('#grid')
   const gridSize = 2 * (width ** 2)
   const cells = []
   const start = document.querySelector('#start')
-
+  const scoreInput = document.querySelector('#score-input')
+  const linesInput = document.querySelector('#lines-input')
 
   for (let i = 0; i < gridSize; i++) {
     const cell = document.createElement('div')
@@ -25,68 +25,80 @@ function setupGame() {
     rowArray.push(cells.slice(i * 10, ((i * 10) + 10)))
   }
 
-  console.log(rowArray)
+  const firstRow = rowArray[0]
+  console.log(firstRow)
+
+  function gameOver() {
+    return firstRow.some((elem) => {
+      return (elem.classList.contains('stationary'))
+    })
+  }
 
   const lastRow = []
   for (let i = 190; i < gridSize; i++) {
     lastRow.push(cells[i])
   }
 
-
-
   // Tertriminos set-up
-
   let line = []
   let tee = []
   let ell = []
   let square = []
+  let startClicked = 0
   const allShapes = ['line', 'tee', 'ell', 'square']
-  // let counter = 0
   let shapeInPlay
   let rotation = 0
   let initialShape
+  let rowCounter = 0
 
+  // Function to generate a new shape when called
   function newShape() {
+    if (gameOver()) {
+      alert('GAME OVER!')
+      return
+    } else {
+      let currentShape = allShapes[Math.floor(Math.random() * 4)]
+      console.log(currentShape)
 
-    let currentShape = allShapes[Math.floor(Math.random() * 4)]
-    console.log(currentShape)
-
-
-
-    if (currentShape === 'line') {
-      line = [0, 1, 2, 3]
-      initialShape = line
-      rotation = 0
-      shapeInPlay = line
-      shapeSelected(shapeInPlay)
-    } else if (currentShape === 'square') {
-      square = [11, 10, 1, 0]
-      initialShape = square
-      rotation = 0
-      shapeInPlay = square
-      shapeSelected(square)
-    } else if (currentShape === 'tee') {
-      tee = [11, 0, 1, 2]
-      initialShape = tee
-      rotation = 0
-      shapeInPlay = tee
-      shapeSelected(tee)
-    } else if (currentShape === 'ell') {
-      ell = [10, 0, 1, 2]
-      initialShape = ell
-      rotation = 0
-      shapeInPlay = ell
-      shapeSelected(ell)
+      if (currentShape === 'line') {
+        line = [0, 1, 2, 3]
+        initialShape = line
+        rotation = 0
+        shapeInPlay = line
+        shapeSelected(shapeInPlay)
+      } else if (currentShape === 'square') {
+        square = [11, 10, 1, 0]
+        initialShape = square
+        rotation = 0
+        shapeInPlay = square
+        shapeSelected(square)
+      } else if (currentShape === 'tee') {
+        tee = [11, 0, 1, 2]
+        initialShape = tee
+        rotation = 0
+        shapeInPlay = tee
+        shapeSelected(tee)
+      } else if (currentShape === 'ell') {
+        ell = [10, 0, 1, 2]
+        initialShape = ell
+        rotation = 0
+        shapeInPlay = ell
+        shapeSelected(ell)
+      }
     }
-
   }
 
+  // Event listener to start game
   start.addEventListener('click', () => {
-
-    newShape()
-
+    startClicked = startClicked + 1
+    if (startClicked === 1) {
+      newShape()
+    } else {
+      return
+    }
   })
 
+  // Control functions to monitor when a shape is no longer movable
   function isAtBottom(shape) {
     return shape.some((elem) => {
       return elem > (gridSize - width - 1)
@@ -111,13 +123,7 @@ function setupGame() {
     })
   }
 
-  // function isLastRowFull() {
-  //   const lastRowFull = lastRow.every((elem) => {
-  //     return (elem.classList.contains('stationary'))
-  //   })
-  //   console.log(lastRowFull)
-  // }
-
+  // *** Removing and moving rows down when filled ***
   function isRowFull() {
     let checkForFullRow = []
     for (let i = 0; i < 20; i++) {
@@ -126,20 +132,20 @@ function setupGame() {
       })
       )
     }
-    console.log(checkForFullRow)
 
     let indexArray = []
     for (let i = 0; i < 20; i++) {
       if (checkForFullRow[i] === true) {
         indexArray.push(i)
+        rowCounter = rowCounter + 1
+        console.log(rowCounter)
+        scoreInput.innerHTML = rowCounter * 100
+        linesInput.innerHTML = rowCounter
       }
     }
-    console.log(indexArray)
 
     for (let i = 0; i < indexArray.length; i++) {
       const fullRow = rowArray[indexArray[i]]
-      console.log(fullRow)
-
       for (let j = 0; j < fullRow.length; j++) {
         fullRow[j].classList.remove('stationary')
       }
@@ -151,20 +157,22 @@ function setupGame() {
           newFixedArray.push(cells[k + width])
         }
       }
-      for (let j = 0; j < newFixedArray.length; j++){
+      for (let j = 0; j < newFixedArray.length; j++) {
         newFixedArray[j].classList.add('stationary')
       }
     }
-
-
   }
 
-  // function isLineFarLeft(shape) {
-  //   return shape.every((elem) => {
-  //     return elem % width <= 2 && elem % width >= 0
-  //   })
-  // }
 
+  function isLineFarLeft(shape) {
+    return shape.some((elem) => {
+      return elem % width <= 2 && elem % width >= 0
+    })
+  }
+
+
+
+  // Function to move shape instantaneously to assigned new position
   function moveShape(newPositions) {
     shapeInPlay.forEach(oldPosition => {
       cells[oldPosition].classList.remove('occupied') // remove occupied class
@@ -175,9 +183,7 @@ function setupGame() {
     shapeInPlay = newPositions
   }
 
-  // Below function adds shape to board and moves down grid automatically
-
-  // Adds piece to board
+  // Main function for adding shapes to board and moves down grid automatically
   function shapeSelected() {
 
     for (let j = 0; j < shapeInPlay.length; j++) {
@@ -200,7 +206,7 @@ function setupGame() {
           cells[shapeInPlay[i]].classList.remove('occupied')
           cells[shapeInPlay[i]].classList.add('stationary')
         }
-
+        isRowFull()
         newShape()
 
       } else {
@@ -210,9 +216,8 @@ function setupGame() {
         }
         moveShape(newPositions)
       }
-    }, 1000)
+    }, 500)
   }
-
 
   // Event listeners - Make the piece move right, left, down on player click
 
@@ -279,12 +284,15 @@ function setupGame() {
             moveShape(newPositions)
           }
           if (rotation % 4 === 2) {
+            if(isLineFarLeft) {
+              return
+            } else {
             let newPositions = []
             for (let i = 0; i < shapeInPlay.length; i++) {
               newPositions.push(shapeInPlay[i] + (-i * (width + 1)))
             }
             moveShape(newPositions)
-
+          }
           }
           if (rotation % 4 === 3) {
             let newPositions = []
