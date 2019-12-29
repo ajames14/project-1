@@ -133,7 +133,17 @@ Lastly, I created a Game Over function, gameOver, which is called every time a n
 
 ### Screenshots
 
+#### Final Product:
 
+![Image 1](/images/img1.png)
+
+#### Players Score Increases:
+
+![Image 2](/images/img2.png)
+
+#### Game Over
+
+![Image 3](/images/img3.png)
 
 ### Bugs
 
