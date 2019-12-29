@@ -489,19 +489,7 @@ function setupGame() {
         }
 
     }
-
-
-
-
   })
-
-
-
-
-
-
-
-
 
 }
 
